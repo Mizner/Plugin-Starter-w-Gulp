@@ -1,0 +1,25 @@
+{
+  "name": "Mizner's Plugin Starter w/ Gulp ",
+  "version": "1.0.0",
+  "description": "the scheduler stuff",
+  "main": "the_scheduler_start.php",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mizner",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-preset-es2015": "*",
+    "browser-sync": "*",
+    "gulp": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-babel": "*",
+    "gulp-concat": "*",
+    "gulp-cssnano": "*",
+    "gulp-rename": "*",
+    "gulp-sass": "*",
+    "gulp-sourcemaps": "*",
+    "gulp-uglify": "*",
+    "node-sass": "*"
+  }
+}
