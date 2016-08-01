@@ -1,15 +1,15 @@
-var theProject = "projectname"; // Make sure this matches the project name in index.php
+var theProject = "projectname"; // Make sure this matches the project name in functions enqueues
 var theSite = theProject + '.dev'; //also a good idea to match your localhost url
 
 var jsFilePath = 'assets/scripts/';
 var theFiles = orderJsFiles([
     // 1st file loads first, 2nd, ect.
     'main.js',
-    'create-form.js'
 ]);
 
-function orderJsFiles(arr){
-    return arr.map(function(str){
+// Provide the ability to simplify ordering scripts for concatenation.  See: var theFiles above
+function orderJsFiles(arr) {
+    return arr.map(function (str) {
         return jsFilePath + str
     })
 }
@@ -24,29 +24,39 @@ var rename = require('gulp-rename');
 var concat = require('gulp-concat');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
+var plumber = require('gulp-plumber');
 
 gulp.task('sass', function () {
+    gulp.src('./assets/styles/main.scss')
+        .pipe(sass()/*.on('error', sass.logError)*/)
+        .pipe(plumber())
+        .pipe(autoprefixer())
+        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.write(''))
+        .pipe(rename('knoxweb.min.css'))
+        .pipe(gulp.dest('./dist'))
+        .pipe(browserSync.stream())
+});
+
+gulp.task('sass-production', function () {
     gulp.src('./assets/styles/main.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer())
         .pipe(cssnano())
-        .pipe(sourcemaps.init({loadMaps: true}))
-        .pipe(sourcemaps.write(''))
-        .pipe(rename(theProject + '.min.css'))
+        .pipe(rename('knoxweb.min.css'))
         .pipe(gulp.dest('./dist'))
-        .pipe(browserSync.stream());
 });
-
 
 
 gulp.task('js', function () {
     gulp.src(theFiles)
+        .pipe(plumber())
         .pipe(concat('output.min.js')) // concat pulls all our files together before minifying them
         .pipe(babel({
             presets: ['es2015']
         }))
         .pipe(uglify())
-        .pipe(rename(theProject + '.min.js'))
+        .pipe(rename('knoxweb.min.js'))
         .pipe(gulp.dest('./dist'))
 });
 
@@ -65,6 +75,11 @@ gulp.task('watch', ['browser-sync'], function () {
     gulp.watch('./assets/scripts/**/*.js', ['js']);
     gulp.watch('./assets/scripts/**/*.js', browserSync.reload);
     gulp.watch('**/*.php', browserSync.reload);
+    gulp.watch("gulpfile.js").on("change", function () {
+        process.exit(0)
+    })
 });
 
 gulp.task('default', ['sass', 'js']);
+
+gulp.task('production', ['sass-production', 'js']);
