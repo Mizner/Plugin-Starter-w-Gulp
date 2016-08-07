@@ -1,7 +1,7 @@
 <?php
 /*
-Plugin Name: Plugin Starter w/ Gulp
-Plugin URI:  https://github.com/Mizner/woocommerce-orders-and-scheduling.git
+Plugin Name: Zip Code Service Area Plugin
+Plugin URI:  https://github.com/Mizner/
 Description:
 Version:     0.0.1
 Author:     Michael Mizner <michaelmizner@gmail.com>
@@ -10,23 +10,30 @@ License:     MIT
 License URI: https://opensource.org/licenses/MIT
 */
 
-$project = "projectname"; // This name should match the project name in gulpfile.js
 
-defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
+defined( "ABSPATH" ) or die( "No script kiddies please!" );
 
-add_action( 'wp_enqueue_scripts', 'the_scheduler_enqueue_scripts' );
-function the_plugin_enqueue_scripts() {
+register_activation_hook( __FILE__, 'service_areas_create_db' );
+function service_areas_create_db() {
+	require_once "inc/create_table.php";
+}
+
+add_action( "admin_enqueue_scripts", "service_areas_enqueue_scripts" );
+function service_areas_enqueue_scripts() {
 	// Load Scripts
-	wp_enqueue_style( 'the_plugin_CSS', plugins_url( './dist/' . $project . '.min.css', __FILE__ ) );
-	wp_enqueue_script( 'the_plugin_JS', plugins_url( './dist/.' . $project . '.min.js', __FILE__ ) );
+	wp_enqueue_script( 'jquery' );
+	wp_enqueue_style( "service_areas_css", plugins_url( "./dist/zcsa.min.css", __FILE__ ) );
+	wp_enqueue_script( "service_areas_js", plugins_url( "./dist/zcsa.min.js", __FILE__ ) );
+	wp_localize_script( "service_areas_js", "SERVICE_AREA", [
+		"security" => wp_create_nonce( "service_area_ajax_nonce" ),
+		"success"  => "success!",
+		"error"    => "error!"
+	] );
 }
 
+// Ajax
 
-/*
- * Query Example
- */
+require_once( "inc/ajax_post.php" );
 
-add_shortcode( 'the_plugin_shortcode', 'the_plugin_shortcode' );
-function the_plugin_shortcode() {
-	require_once( 'inc/example-query.php' );
-}
+// Admin Menu & Page
+require_once( "inc/dashboard.php" );
