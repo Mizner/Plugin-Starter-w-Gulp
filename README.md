@@ -1,4 +1,4 @@
-# Plugin-Starter-w-Gulp
+# Plugin start with gulp
 
 Wordpress Plugin with Gulp sass, babel, and browsersync
 
@@ -6,3 +6,4 @@ Wordpress Plugin with Gulp sass, babel, and browsersync
 ``gulp watch``
 
 ``gulp``
+# zip-code-service-areas
